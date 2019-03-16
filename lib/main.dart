@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/register.dart';
+import 'package:http/http.dart' show get;
+import 'dart:convert';
 
 // void main() {
 //   runApp(App());
@@ -25,7 +27,24 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 // Explicit
   final formKey = GlobalKey<FormState>();
+  final _scaffoldkey = GlobalKey<ScaffoldState>();
   String emailString, passwordString;
+
+  void showSnackBar(String message) {
+    final snackBar = new SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Colors.red,
+      duration: new Duration(seconds: 8),
+      action: new SnackBarAction(
+        label: 'Hint',
+        onPressed: () {},
+      ),
+    );
+    _scaffoldkey.currentState.showSnackBar(snackBar);
+  }
 
   Widget nameApp = Text(
     'Pae Food',
@@ -68,9 +87,41 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void checkUserAndPass(BuildContext context, String email, String password) {
+  void checkUserAndPass(
+      BuildContext context, String email, String password) async {
     print('email = $email , password = $password');
-    
+    String urlString =
+        'https://www.androidthai.in.th/chit/getUserWhereUserPae.php?isAdd=true&Email=$email';
+    var response = await get(urlString);
+    var result = json.decode(response.body);
+    print('result = $result');
+    if (result.toString() == 'null') {
+      print('False');
+      //showAlertDialog(context);
+      showSnackBar('User False');
+    } else {}
+  }
+
+  showAlertDialog(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text('OK'),
+      onPressed: () {
+        Navigator.of(context).pop(); // dismiss dialog
+      },
+    );
+
+    AlertDialog alertDialop = AlertDialog(
+      title: Text('Have Problem'),
+      content: Text('User False'),
+      actions: <Widget>[okButton],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alertDialop;
+      },
+    );
   }
 
   Widget signInButton(BuildContext context) {
@@ -85,7 +136,7 @@ class _HomeState extends State<Home> {
         print(formKey.currentState.validate());
         if (formKey.currentState.validate()) {
           formKey.currentState.save();
-          checkUserAndPass(context ,emailString ,passwordString);
+          checkUserAndPass(context, emailString, passwordString);
         }
       },
     );
@@ -110,6 +161,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey,
       body: Form(
         key: formKey,
         child: Container(
@@ -131,7 +183,10 @@ class _HomeState extends State<Home> {
                   margin: EdgeInsets.only(top: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[signInButton(context), signUpButton(context)],
+                    children: <Widget>[
+                      signInButton(context),
+                      signUpButton(context)
+                    ],
                   ),
                 ),
               ],
