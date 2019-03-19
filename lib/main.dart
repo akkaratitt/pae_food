@@ -3,7 +3,7 @@ import 'screens/register.dart';
 import 'package:http/http.dart' show get;
 import 'dart:convert';
 import 'models/user_model.dart';
-import 'screens/my_service.dart';
+import 'screens/my_service2.dart';
 
 // void main() {
 //   runApp(App());
@@ -112,7 +112,7 @@ class _HomeState extends State<Home> {
         if (password == turePassword) {
           showSnackBar('Welcome $name');
           var myServiceRoute = new MaterialPageRoute(
-              builder: (BuildContext context) => MyService(nameLoginString: name,));
+              builder: (BuildContext context) => MyService2(nameLoginString: name,));
               Navigator.of(context).push(myServiceRoute);
         } else {
           showSnackBar('Please Try Again Password False');
@@ -181,6 +181,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldkey,
+      resizeToAvoidBottomPadding: false,
       body: Form(
         key: formKey,
         child: Container(
