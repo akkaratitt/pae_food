@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' show get;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/src/painting/image_provider.dart';
 import '../models/photo_food_model.dart';
 
 class MyService extends StatefulWidget {
@@ -16,77 +15,79 @@ class MyService extends StatefulWidget {
 
 class _MyServiceState extends State<MyService> {
   List list = List();
-  var isLoading = false;
+  var isData = false;
 
   Widget showNameLogin() {
     return Text('${widget.nameLoginString}');
   }
 
-  void getDataFood(BuildContext context) async {
+  void getDataFood() async {
     // setState(() {
-    //   isLoading = true;
+    //   isData = true;
     // });
 
-    String urlString =
-        "https://www.androidthai.in.th/chit/getFoodTableAllData.php";
+    String urlString = "https://www.androidthai.in.th/chit/getFoodTableAllData.php";
+    // String urlString = "http://192.168.1.16:8080/UngPHP2/getFoodTableAllData.php";
     final response = await get(urlString);
 
-    //print('result=$response');
+      //print('result=${response.body}');
+
     if (response.statusCode == 200) {
       list = (json.decode(response.body) as List)
           .map((data) => new PhotoFoodModel.fromJson(data))
           .toList();
+      // setState(() {
+      //   isData = false;
+        
+      // });
+      isData = true;
       setState(() {
-        isLoading = false;
+        print('result=${list.length}');
       });
     } else {
       throw Exception('Failed to load photos');
     }
   }
 
+  @override
+  void initState() {
+    getDataFood();
+  }
+
   Widget _buildPhoto(BuildContext context) {
-    return isLoading
-        ? Center(
-            child: CircularProgressIndicator(),
+    return !isData
+        ? new Center(
+            child: new CircularProgressIndicator(),
           )
-        : new Scrollbar(
-            child: new ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.all(10.0),
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    contentPadding: EdgeInsets.all(10.0),
-                    
-                    title: new Text(list[index].nameFood),
-                    trailing: new Image.network(
-                      list[index].imagePath,
-                      fit: BoxFit.cover,
-                      height: 80.0,
-                      width: 80.0,
-                    ),
-                  );
-                }),
+        : ListView.builder(
+            padding: EdgeInsets.all(10.0),
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                contentPadding: EdgeInsets.all(20.0),
+                title: new Text(list[index].nameFood),
+                trailing: new Image.network(
+                  list[index].imagePath,
+                  fit: BoxFit.cover,
+                  height: 80.0,
+                  width: 80.0,
+                ),
+              );
+            },
           );
   }
 
   @override
   Widget build(BuildContext context) {
-    getDataFood(context);
-
+   
     return Scaffold(
       appBar: AppBar(
         title: showNameLogin(),
       ),
-      body: new SingleChildScrollView(
-        // for not show Overflow Bottom
-        child: Container(
-          padding: EdgeInsets.only(top: 60.0),
-          alignment: Alignment.center,
-          child: Column(
-            children: <Widget>[_buildPhoto(context)],
-          ),
-        ),
+      body: Container(
+        padding: EdgeInsets.only(top: 10.0),
+        alignment: Alignment.center,
+        child: _buildPhoto(context),
       ),
     );
   }

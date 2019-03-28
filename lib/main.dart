@@ -3,7 +3,8 @@ import 'screens/register.dart';
 import 'package:http/http.dart' show get;
 import 'dart:convert';
 import 'models/user_model.dart';
-import 'screens/my_service2.dart';
+//import 'screens/my_service2.dart';
+import 'screens/menu.dart';
 
 // void main() {
 //   runApp(App());
@@ -68,6 +69,7 @@ class _HomeState extends State<Home> {
           return 'Please Fill Email Format';
         }
       },
+      initialValue: 'pae@gmail.com',
       onSaved: (String value) {
         emailString = value;
       },
@@ -83,6 +85,7 @@ class _HomeState extends State<Home> {
           return 'Please Type Password More 6 Charetor';
         }
       },
+      initialValue: '123456',
       onSaved: (String value) {
         passwordString = value;
       },
@@ -92,8 +95,10 @@ class _HomeState extends State<Home> {
   void checkUserAndPass(
       BuildContext context, String email, String password) async {
     print('email = $email , password = $password');
-    String urlString =
-        'https://www.androidthai.in.th/chit/getUserWhereUserPae.php?isAdd=true&Email=$email';
+     String urlString =
+         'https://www.androidthai.in.th/chit/getUserWhereUserPae.php?isAdd=true&Email=$email';
+    // String urlString =
+    //     'http://192.168.1.16:8080/UngPHP2/getUserWhereUserPae.php?isAdd=true&Email=$email';   
     var response = await get(urlString);
     var result = json.decode(response.body);
     print('result = $result');
@@ -112,8 +117,11 @@ class _HomeState extends State<Home> {
         if (password == turePassword) {
           showSnackBar('Welcome $name');
           var myServiceRoute = new MaterialPageRoute(
-              builder: (BuildContext context) => MyService2(nameLoginString: name,));
-              Navigator.of(context).push(myServiceRoute);
+              //builder: (BuildContext context) => MyService2(nameLoginString: name,));
+              builder: (BuildContext context) => Menu(
+                    nameLoginString: name,
+                  ));
+          Navigator.of(context).push(myServiceRoute);
         } else {
           showSnackBar('Please Try Again Password False');
         }
@@ -181,7 +189,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldkey,
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomPadding: true,
       body: Form(
         key: formKey,
         child: Container(
@@ -190,26 +198,30 @@ class _HomeState extends State<Home> {
               gradient: LinearGradient(
                   colors: [Colors.yellow, Colors.green[400]],
                   begin: Alignment.topCenter)),
-          child: Container(
-            margin: EdgeInsets.only(top: 80.0, bottom: 80.0),
-            constraints: BoxConstraints.expand(width: 200.0),
-            child: Column(
-              children: <Widget>[
-                logo,
-                nameApp,
-                emailTextField(),
-                passwordTextField(),
-                Container(
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      signInButton(context),
-                      signUpButton(context)
-                    ],
+          child: new SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            reverse: true,
+            child: Container(
+              margin: EdgeInsets.only(top: 80.0, bottom: 80.0),
+              constraints: new BoxConstraints(maxWidth: 200.0),
+              child: Column(
+                children: <Widget>[
+                  logo,
+                  nameApp,
+                  emailTextField(),
+                  passwordTextField(),
+                  Container(
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        signInButton(context),
+                        signUpButton(context)
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

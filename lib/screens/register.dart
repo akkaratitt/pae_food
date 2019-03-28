@@ -71,7 +71,8 @@ class _RegisterState extends State<Register> {
   void uploadValueToServer(
       BuildContext context, String name, String email, String password) async {
     String urlString =
-        'https://www.androidthai.in.th/chit/addDataPae.php?isAdd=true&Name=$name&Email=$email&Password=$password';
+       'https://www.androidthai.in.th/chit/addDataPae.php?isAdd=true&Name=$name&Email=$email&Password=$password';
+    // String urlString = 'http://192.168.1.16:8080/UngPHP2/addDataPae.php?isAdd=true&Name=$name&Email=$email&Password=$password';
     print('url = $urlString');
 
     var response =
